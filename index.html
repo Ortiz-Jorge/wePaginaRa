@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Importar el componente web de model-viewer para que procese los modelos 3D -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Industria 4.0 - RA/RV</title>
+    
+    <style>
+        :root {
+            --bg-principal: #070a13;
+            --bg-tarjeta: #111827;
+            --azul-neon: #38bdf8;
+            --morado-neon: #a855f7;
+            --texto-claro: #f3f4f6;
+            --texto-oscuro: #9ca3af;
+        }
+
+        body { background-color: var(--bg-principal); margin: 0; padding-top: 80px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--texto-claro); }
+        
+        nav { background-color: rgba(17, 24, 39, 0.9); backdrop-filter: blur(10px); position: fixed; top: 0; width: 100%; padding: 20px 0; text-align: center; border-bottom: 2px solid var(--azul-neon); z-index: 1000; }
+        nav a { color: var(--texto-claro); text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; transition: color 0.3s; }
+        nav a:hover { color: var(--azul-neon); }
+
+        .hero-seccion { max-width: 1100px; margin: 40px auto; padding: 20px; }
+        .hero-titulo-contenedor { text-align: center; margin-bottom: 40px; }
+        .hero-titulo-contenedor h1 { font-size: 3rem; color: var(--azul-neon); margin: 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 20px rgba(56, 189, 248, 0.4); }
+        .grid-inicio { display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; align-items: start; }
+        .panel-interactivo { background-color: var(--bg-tarjeta); padding: 40px; border-radius: 12px; border: 1px solid #1f2937; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
+        
+        .galeria-imagenes { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .tarjeta-img { position: relative; overflow: hidden; border-radius: 8px; border: 2px solid #1f2937; transition: all 0.3s ease; height: 200px; }
+        .tarjeta-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .tarjeta-img:hover { border-color: var(--azul-neon); box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+        .tarjeta-img:hover img { transform: scale(1.1); }
+
+        h2 { color: var(--azul-neon); margin-top: 0; font-size: 1.8rem; border-bottom: 2px solid #1f2937; padding-bottom: 10px; }
+        .botones-contenedor { margin-top: 25px; display: flex; gap: 12px; justify-content: center; }
+        .btn { border: none; padding: 12px 24px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: all 0.2s; }
+        .btn-activo { background-color: var(--azul-neon); color: #070a13; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+        .btn-inactivo { background-color: #070a13; color: var(--texto-claro); border: 1px solid var(--azul-neon); }
+        .btn-inactivo:hover { background-color: rgba(56, 189, 248, 0.1); }
+        .caja-dinamica { margin-top: 25px; background-color: #070a13; padding: 25px; border-radius: 8px; min-height: 110px; border: 1px solid #1f2937; color: var(--texto-oscuro); line-height: 1.6; }
+
+        .seccion-estandar { padding: 60px 40px; background-color: var(--bg-tarjeta); border-radius: 12px; max-width: 1100px; margin: 40px auto; border: 1px solid #1f2937; min-height: 30vh; }
+        
+        .grid-tecnologias { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+        .tarjeta-tec { background-color: var(--bg-principal); border: 1px solid #1f2937; border-radius: 10px; overflow: hidden; transition: all 0.3s ease; }
+        .img-header { height: 250px; width: 100%; object-fit: cover; border-bottom: 2px solid #1f2937; }
+        .contenido-tec { padding: 30px; }
+        .titulo-tec { font-size: 1.5rem; color: white; margin: 0 0 15px 0; }
+        
+        .detalles-tecnicos { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #334155; color: var(--texto-oscuro); }
+        .mostrar-detalles { display: block; animation: aparecer 0.5s ease; }
+        
+        @keyframes aparecer { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        html { scroll-behavior: smooth; }
+
+        /* Estructura flexible para los casos de uso */
+        .caso-flex { display: flex; gap: 30px; align-items: center; }
+        @media (max-width: 768px) { .caso-flex { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#tecnologias">Tecnologías RA/RV</a>
+        <a href="#casos">Casos de Uso</a>
+        <a href="#multimedia">Multimedia 3D</a>
+    </nav>
+
+    <main id="inicio" class="hero-seccion">
+        <div class="hero-titulo-contenedor">
+            <h1>Ecosistema Industrial 4.0</h1>
+        </div>
+        <div class="grid-inicio">
+            <div class="panel-interactivo">
+                <h2 style="border:none;">¿Qué es la Industria 4.0?</h2>
+                <p style="color: var(--texto-oscuro); line-height: 1.6; margin: 0;">Es la convergencia de sistemas avanzados de producción y tecnologías digitales inteligentes. Representa la automatización absoluta de los procesos industriales mediante el análisis de datos en tiempo real.</p>
+                <div class="botones-contenedor" style="justify-content: flex-start;">
+                    <button id="btnDefinicion" class="btn btn-activo">Concepto Clave</button>
+                    <button id="btnPilares" class="btn btn-inactivo">Los 4 Pilares</button>
+                </div>
+                <div class="caja-dinamica">
+                    <p id="textoDinamico" style="margin: 0;">Haz clic en los botones para explorar los fundamentos de esta revolución tecnológica.</p>
+                </div>
+            </div>
+            <div class="galeria-imagenes">
+                <div class="tarjeta-img"><img src="https://images.pexels.com/photos/2881233/pexels-photo-2881233.jpeg?_gl=1*1iph7u9*_ga*MTcwNDUzOTk4Ni4xNzc5NzMwODY3*_ga_8JE65Q40S6*czE3Nzk5MTEwNjEkbzIkZzEkdDE3Nzk5MTQwOTUkajYwJGwwJGgw" alt="Automatización"></div>
+                <div class="tarjeta-img"><img src="https://www.iadb.org/sites/default/files/styles/landscape_3x2_690000_690x460_100/public/2023-10/Artificial%20Intelligence%20in%20Transport.webp?h=8b2987e5&itok=-bLHGgue" alt="Sensores IoT"></div>
+                <div class="tarjeta-img"><img src="https://media.istockphoto.com/id/2186167669/photo/male-engineer-uses-an-augmented-reality-headset-to-interact-with-holographic-model-of-engine.jpg?s=2048x2048&w=is&k=20&c=wMeb6gg1n86jPIGSNkVXKRoyICCkB5sDuq3yt7xEfto=" alt="Big Data"></div>
+                <div class="tarjeta-img"><img src="https://images.pexels.com/photos/1309725/pexels-photo-1309725.jpeg?_gl=1*18umcwe*_ga*MTcwNDUzOTk4Ni4xNzc5NzMwODY3*_ga_8JE65Q40S6*czE3Nzk5MTEwNjEkbzIkZzEkdDE3Nzk5MTQ1NjgkajI5JGwwJGgw" alt="Maquinaria"></div>
+            </div>
+        </div>
+    </main>
+
+    <section id="tecnologias" class="seccion-estandar">
+        <h2 style="text-align: center; border: none; font-size: 2.2rem;">Análisis Técnico: RA vs RV</h2>
+        <p style="text-align: center; color: var(--texto-oscuro);">Comprende cómo operan estas interfaces inmersivas en el entorno industrial.</p>
+        <div class="grid-tecnologias">
+            <div class="tarjeta-tec" id="cardRA">
+                <img class="img-header" src="https://images.pexels.com/photos/6684817/pexels-photo-6684817.jpeg?_gl=1*50utuu*_ga*MTcwNDUzOTk4Ni4xNzc5NzMwODY3*_ga_8JE65Q40S6*czE3Nzk5MTEwNjEkbzIkZzEkdDE3Nzk5MTM4ODQkajYwJGwwJGgw" alt="Realidad Aumentada">
+                <div class="contenido-tec">
+                    <h3 class="titulo-tec">Realidad Aumentada (RA)</h3>
+                    <p style="color: var(--texto-claro); line-height: 1.5;">Proyecta información digital interactiva directamente sobre el entorno físico real del operario.</p>
+                    <button class="btn btn-inactivo" id="btnExpandeRA" style="width: 100%; margin-top: 15px;">Ver Especificaciones</button>
+                    <div class="detalles-tecnicos" id="detallesRA">
+                        <ul style="line-height: 1.8; padding-left: 15px;">
+                            <li><strong>Entorno:</strong> No aísla al usuario. Mantiene la visión del mundo real.</li>
+                            <li><strong>Hardware típico:</strong> Gafas inteligentes (Smart Glasses) o Tablets.</li>
+                            <li><strong>Aplicación Técnica:</strong> Superposición de manuales holográficos sobre motores reales.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tarjeta-tec" id="cardRV">
+                <img class="img-header" src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=600&q=80" alt="Realidad Virtual">
+                <div class="contenido-tec">
+                    <h3 class="titulo-tec">Realidad Virtual (RV)</h3>
+                    <p style="color: var(--texto-claro); line-height: 1.5;">Sumerge al usuario en un entorno 100% digital y simulado, bloqueando completamente el mundo físico exterior.</p>
+                    <button class="btn btn-inactivo" id="btnExpandeRV" style="width: 100%; margin-top: 15px;">Ver Especificaciones</button>
+                    <div class="detalles-tecnicos" id="detallesRV">
+                        <ul style="line-height: 1.8; padding-left: 15px;">
+                            <li><strong>Entorno:</strong> Aislamiento total renderizado por la computadora.</li>
+                            <li><strong>Hardware típico:</strong> Visores cerrados y controladores hápticos.</li>
+                            <li><strong>Aplicación Técnica:</strong> Simuladores de capacitación para operar maquinaria peligrosa sin riesgo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="casos" class="seccion-estandar">
+        <h2 style="text-align: center; border: none; font-size: 2.2rem;">Casos de Uso en la Industria</h2>
+        <p style="text-align: center; color: var(--texto-oscuro);">Aplicación práctica de las tecnologías inmersivas en procesos reales.</p>
+
+        <div class="botones-contenedor" style="border-bottom: 1px solid #1f2937; padding-bottom: 20px; margin-bottom: 0;">
+            <button class="btn btn-activo" id="tabRA">Mantenimiento (RA)</button>
+            <button class="btn btn-inactivo" id="tabRV">Capacitación Segura (RV)</button>
+        </div>
+
+        <div style="background-color: var(--bg-principal); padding: 40px; border-radius: 0 0 8px 8px; border: 1px solid #1f2937; border-top: none;">
+            <div id="contenidoCaso" class="caso-flex">
+                <div style="flex: 1;">
+                    <span style="background-color: rgba(56, 189, 248, 0.1); color: var(--azul-neon); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; border: 1px solid var(--azul-neon);">Tecnología RA</span>
+                    <h3 style="color: white; font-size: 1.8rem; margin: 15px 0;">Asistencia Remota y Mantenimiento</h3>
+                    <p style="color: var(--texto-claro); line-height: 1.7; font-size: 1.1rem;">Un operario frente a una turbina averiada usa una tablet o gafas RA. Un ingeniero experto, desde otro país, ve el mismo equipo a través de la cámara y dibuja flechas holográficas en la pantalla del operario indicando las tuercas exactas que deben ajustarse.</p>
+                </div>
+                <div style="flex: 1;">
+                    <img src="https://media.istockphoto.com/id/2266765452/photo/team-laptop-and-business-men-with-vr-in-office-for-user-interface-online-website-and.jpg?s=2048x2048&w=is&k=20&c=rG5e9011D5_M0yPxQfr_nifk_R7mfGs10dpSlACY7Ts=" style="width: 100%; border-radius: 8px; border: 1px solid #1f2937; box-shadow: 0 10px 20px rgba(0,0,0,0.4);" alt="Mantenimiento Industrial">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="multimedia" class="seccion-estandar" style="display: flex; flex-direction: column; align-items: center; padding: 60px 20px;">
+            <h2 style="text-align: center; border: none; font-size: 2.2rem; margin-bottom: 10px; width: 100%;">Interfaces Inmersivas: RA y RV</h2>
+            <p style="text-align: center; color: var(--texto-oscuro); max-width: 700px; margin: 0 auto 40px auto; line-height: 1.6;">
+                Demostración de propiedades: La RA requiere hardware móvil para proyecciones reales. La RV genera un confinamiento digital controlado en 360°.
+            </p>
+
+            <div class="grid-tecnologias" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; width: 100%; max-width: 1000px; justify-items: center; align-items: start;">
+                
+                <div class="tarjeta-tec" style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; background-color: var(--bg-principal); border: 1px solid #1f2937; border-radius: 10px;">
+                    <div style="width: 100%; position: relative; display: flex; justify-content: center;">
+                        <model-viewer 
+                            src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                            alt="Componente Mecánico Industrial para RA" 
+                            auto-rotate 
+                            camera-controls 
+                            ar 
+                            ar-modes="webxr scene-viewer quick-look"
+                            ar-placement="floor"
+                            shadow-intensity="1"
+                            style="width: 100%; height: 350px; background-color: #0d1321; border-radius: 8px;">
+                            
+                            <button slot="ar-button" style="background-color: var(--azul-neon); border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; color: #070a13; font-weight: bold; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 99; box-shadow: 0 4px 10px rgba(56, 189, 248, 0.4);">
+                                ▲ Colocar en tu Espacio (RA)
+                            </button>
+                        </model-viewer>
+                    </div>
+                    <div class="contenido-tec" style="padding: 20px 0 0 0; display: flex; flex-direction: column; align-items: center;">
+                        <h3 class="titulo-tec" style="margin-top: 0; color: #fff;">Traje De Astronauta (RA)</h3>
+                        <p style="color: var(--texto-oscuro); font-size: 0.90rem; margin: 0 0 15px 0; line-height: 1.4; text-align: center;">
+                            <strong>¡Pruébalo en tu entorno!</strong><br>Escanea este código QR con la cámara de tu teléfono móvil para abrir la experiencia en Realidad Aumentada.
+                        </p>
+                        <img src="data:image/png;base64,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" 
+                                alt="Código QR RA" 
+                                style="border: 6px solid #fff; border-radius: 4px; background-color: #fff; width: 140px; height: 140px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);">
+                    </div>
+                </div> <div class="tarjeta-tec" style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; background-color: var(--bg-principal); border: 1px solid #1f2937; border-radius: 10px;">
+                    <div style="width: 100%; display: flex; justify-content: center;">
+                        <model-viewer 
+                            id="visor-ciudad"
+                            src="https://raw.githubusercontent.com/Ortiz-Jorge/wePaginaRa/main/Cyberpunk_City.glb" 
+                            auto-rotate 
+                            camera-controls
+                            camera-target="0m 1.6m 0m" 
+                            camera-orbit="0deg 90deg 0.5m"
+                            field-of-view="95deg"
+                            min-camera-orbit="auto auto 0.2m"
+                            max-camera-orbit="auto auto 2m"
+                            shadow-intensity="1"
+                            style="width: 100%; height: 350px; background-color: #000; border-radius: 8px;">
+                        </model-viewer>
+                    </div>
+                    
+                    <button id="btn-reset-camara" style="margin-top: 15px; margin-bottom: 5px; background-color: transparent; color: var(--morado-neon); border: 1px solid var(--morado-neon); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem; width: 100%; box-sizing: border-box; transition: background 0.2s;">
+                        🎯 Restablecer Vista de la Calle
+                    </button>
+
+                    <div class="contenido-tec" style="padding: 15px 0 0 0; display: flex; flex-direction: column; align-items: center;">
+                        <h3 class="titulo-tec" style="margin-top: 0; color: #fff;">Ciudad Futurista (RV)</h3>
+                        <p style="color: var(--texto-oscuro); font-size: 0.95rem; margin: 0; line-height: 1.5;">
+                            <strong>Inmersión:</strong> Explora el entorno urbano desde adentro. Si te alejas o te pierdes entre los edificios, usa el botón superior para regresar al punto de inicio.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+   
+
+    <script>
+        // Lógica de Inicio
+        const btnDefinicion = document.getElementById('btnDefinicion');
+        const btnPilares = document.getElementById('btnPilares');
+        const textoDinamico = document.getElementById('textoDinamico');
+
+        btnDefinicion.addEventListener('click', () => {
+            btnDefinicion.className = 'btn btn-activo';
+            btnPilares.className = 'btn btn-inactivo';
+            textoDinamico.innerHTML = "<strong>La Automatización Inteligente:</strong> No se trata solo de máquinas que hacen el trabajo físico, sino de sistemas cibernéticos capaces de comunicarse entre sí y tomar decisiones en tiempo real analizando datos de la nube.";
+        });
+
+        btnPilares.addEventListener('click', () => {
+            btnPilares.className = 'btn btn-activo';
+            btnDefinicion.className = 'btn btn-inactivo';
+            textoDinamico.innerHTML = `<ul style="padding-left: 20px; margin: 0; line-height: 1.8; color: var(--texto-claro);"><li><strong>Big Data:</strong> Analítica de datos.</li><li><strong>IoT:</strong> Red de sensores físicos.</li><li><strong>Sistemas Ciberfísicos:</strong> Algoritmos informáticos en el mundo real.</li><li><strong>Tecnologías Inmersivas:</strong> RA y RV.</li></ul>`;
+        });
+
+        // Lógica Tecnologías RA/RV
+        const btnExpandeRA = document.getElementById('btnExpandeRA');
+        const detallesRA = document.getElementById('detallesRA');
+        const cardRA = document.getElementById('cardRA');
+        btnExpandeRA.addEventListener('click', () => {
+            detallesRA.classList.toggle('mostrar-detalles');
+            btnExpandeRA.textContent = detallesRA.classList.contains('mostrar-detalles') ? "Ocultar Especificaciones" : "Ver Especificaciones";
+            btnExpandeRA.className = detallesRA.classList.contains('mostrar-detalles') ? "btn btn-activo" : "btn btn-inactivo";
+            cardRA.style.borderColor = detallesRA.classList.contains('mostrar-detalles') ? "var(--azul-neon)" : "#1f2937";
+        });
+
+        const btnExpandeRV = document.getElementById('btnExpandeRV');
+        const detallesRV = document.getElementById('detallesRV');
+        const cardRV = document.getElementById('cardRV');
+        btnExpandeRV.addEventListener('click', () => {
+            detallesRV.classList.toggle('mostrar-detalles');
+            btnExpandeRV.textContent = detallesRV.classList.contains('mostrar-detalles') ? "Ocultar Especificaciones" : "Ver Especificaciones";
+            btnExpandeRV.className = detallesRV.classList.contains('mostrar-detalles') ? "btn btn-activo" : "btn btn-inactivo";
+            cardRV.style.borderColor = detallesRV.classList.contains('mostrar-detalles') ? "var(--azul-neon)" : "#1f2937";
+        });
+
+        // LÓGICA DE CASOS DE USO
+        const tabRA = document.getElementById('tabRA');
+        const tabRV = document.getElementById('tabRV');
+        const contenidoCaso = document.getElementById('contenidoCaso');
+
+        tabRA.addEventListener('click', () => {
+            tabRA.className = 'btn btn-activo';
+            tabRV.className = 'btn btn-inactivo';
+            // Sobrescribimos el HTML del contenedor para la RA
+            contenidoCaso.innerHTML = `
+                <div style="flex: 1;">
+                    <span style="background-color: rgba(56, 189, 248, 0.1); color: var(--azul-neon); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; border: 1px solid var(--azul-neon);">Tecnología RA</span>
+                    <h3 style="color: white; font-size: 1.8rem; margin: 15px 0;">Asistencia Remota y Mantenimiento</h3>
+                    <p style="color: var(--texto-claro); line-height: 1.7; font-size: 1.1rem;">Un operario frente a una turbina averiada usa una tablet o gafas RA. Un ingeniero experto, desde otro país, ve el mismo equipo a través de la cámara y dibuja flechas holográficas en la pantalla del operario indicando las tuercas exactas que deben ajustarse.</p>
+                </div>
+                <div style="flex: 1;">
+                    <img src="https://media.istockphoto.com/id/2266765452/photo/team-laptop-and-business-men-with-vr-in-office-for-user-interface-online-website-and.jpg?s=2048x2048&w=is&k=20&c=rG5e9011D5_M0yPxQfr_nifk_R7mfGs10dpSlACY7Ts=" style="width: 100%; border-radius: 8px; border: 1px solid #1f2937; box-shadow: 0 10px 20px rgba(0,0,0,0.4);" alt="Mantenimiento Industrial">
+                </div>
+            `;
+        });
+
+        tabRV.addEventListener('click', () => {
+            tabRV.className = 'btn btn-activo';
+            tabRA.className = 'btn btn-inactivo';
+            // Sobrescribimos el HTML del contenedor cambiando colores e imagen para la RV
+            contenidoCaso.innerHTML = `
+                <div style="flex: 1;">
+                    <span style="background-color: rgba(168, 85, 247, 0.1); color: var(--morado-neon); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; border: 1px solid var(--morado-neon);">Tecnología RV</span>
+                    <h3 style="color: white; font-size: 1.8rem; margin: 15px 0;">Simulación de Entornos Peligrosos</h3>
+                    <p style="color: var(--texto-claro); line-height: 1.7; font-size: 1.1rem;">Nuevos empleados practican maniobras de emergencia en plataformas petroleras virtuales. Si cometen un error crítico, el sistema simulado falla, alertando al empleado sin poner en riesgo físico a la planta ni al operario real.</p>
+                </div>
+                <div style="flex: 1;">
+                    <img src="https://images.ctfassets.net/5i1m3im8l2b5/3u8KNc9PtUk77M7Ae1y8HT/71504feb1ef8ce6ebc9799650de1bebf/what-is-ar.jpg?w=1200&h=630&fl=progressive&q=50&fm=jpg" style="width: 100%; border-radius: 8px; border: 1px solid #1f2937; box-shadow: 0 10px 20px rgba(0,0,0,0.4);" alt="Simulación RV">
+                </div>
+            `;
+
+        });
+            
+            // Lógica de control para el restablecimiento de la cámara
+                const visorCiudad = document.getElementById('visor-ciudad');
+                const btnReset = document.getElementById('btn-reset-camara');
+
+                if (btnReset && visorCiudad) {
+                    btnReset.addEventListener('click', () => {
+                        // CORREGIDO: Ahora los valores asignados coinciden exactamente con los atributos del HTML inicial
+                        visorCiudad.cameraTarget = "0m 1.6m 0m";
+                        visorCiudad.cameraOrbit = "0deg 90deg 0.5m";
+                        visorCiudad.fieldOfView = "95deg";
+                    });
+
+                    btnReset.addEventListener('mouseover', () => {
+                        btnReset.style.backgroundColor = 'rgba(168, 85, 247, 0.1)';
+                    });
+                    btnReset.addEventListener('mouseout', () => {
+                        btnReset.style.backgroundColor = 'transparent';
+                    });
+                }
+            
+    </script>
+      
+        
+</body>
+</html>
